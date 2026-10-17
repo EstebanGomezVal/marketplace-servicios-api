@@ -2,13 +2,13 @@ import { Request, Response, NextFunction } from 'express';
 
 
 export const authentication = (req: Request, res: Response, next: NextFunction) => {
-    res.json({message: "Autorizado"})
+    console.log('[authenticate] petición recibida')
     next();
 };
 
 export const allowRole = (...roles: string[]) => {
     return (req: Request, res: Response, next: NextFunction) => {
-            res.json({roles: roles, message: "Role aceptado"})
+        console.log('Role aceptado')
         next();
     };
 };
