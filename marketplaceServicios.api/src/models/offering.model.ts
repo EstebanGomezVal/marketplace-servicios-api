@@ -4,7 +4,9 @@ export const CATEGORIAS_VALIDAS = [
     'Plomería', 'Electricidad', 'Carpintería',
     'Limpieza', 'Jardinería', 'Construcción',
     'Tecnología', 'Otro'
-];
+] as const
+
+export const TIPOS_PRECIO_VALIDOS = ['fijo', 'por hora', 'cotización'] as const
 
 const servicioSchema = new Schema({
     proveedor: { type: Schema.Types.ObjectId, ref: 'Proveedor', required: true },
@@ -16,7 +18,7 @@ const servicioSchema = new Schema({
         enum: CATEGORIAS_VALIDAS 
     },
     precio: { type: Number, required: true },
-    tipoPrecio: { type: String, enum: ['fijo', 'por hora', 'cotización'], required: true },
+    tipoPrecio: { type: String, enum: TIPOS_PRECIO_VALIDOS, required: true },
     activo: { type: Boolean, default: true }
 }, {
     timestamps: true
