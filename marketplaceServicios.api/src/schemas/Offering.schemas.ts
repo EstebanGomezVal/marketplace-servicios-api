@@ -4,7 +4,7 @@ import { CATEGORIAS_VALIDAS, TIPOS_PRECIO_VALIDOS } from '../models/offering.mod
 export const serviceSchemaZod = z.object({
     proveedor: z.string({ message: 'El proveedor es obligatorio' })
         .min(1, { message: 'El proveedor no puede estar vacIo' })
-        .regex(/^[0-9a-fA-F]{20}$/, { message: 'El ID del proveedor no tiene un formato valido' }),
+        .regex(/^[0-9a-fA-F]{24}$/, { message: 'El ID del proveedor no tiene un formato valido' }),
 
     titulo: z.string({ message: 'El titulo es obligatorio' })
         .min(1, { message: 'El titulo no puede estar vacio' }),

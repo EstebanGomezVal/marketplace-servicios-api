@@ -1,11 +1,11 @@
 import { z } from 'zod';
 
 export const usuarioSchemaZod = z.object({
-     descripcion: z.string()
-        .min(1, { message: 'El usuario es obligatorio' }),
+     nombre: z.string()
+        .min(1, { message: 'El nombre es obligatorio' }),
     apellido: z.string()
         .min(1, { message: 'El apeliido es obligatorio' }),
-    email: z.string()
+    correo: z.string()
         .min(1, { message: 'El correo es obligatorio' })
         .refine((val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val), {
             message: 'Debe ser un correo electronico valido'
@@ -18,7 +18,7 @@ export const usuarioSchemaZod = z.object({
         .regex(/^[0-9]{10}$/, { message: 'El telefono debe tener exactamente 10 digitos numericos' })
         .optional(),
     ciudad: z.string()
-        .min(1, { message: 'El apeliido es obligatorio' })
+        .min(1, { message: 'La ciudad no puede estar vacia' })
         .optional(),
     fotoPerfil: z.string()
         .min(1, { message: 'La URL no puede estar vacia' })
@@ -33,7 +33,6 @@ export const usuarioSchemaZod = z.object({
             message: 'Debe ser una URL valida'
         })
         .optional(),
-        rol: { type: String, enum: ['cliente', 'proveedor', 'admin'], default: 'cliente' },
-        isDeleted: { type: Boolean, default: false }
+            rol: z.enum(['cliente', 'proveedor', 'admin']).optional()
 })
 

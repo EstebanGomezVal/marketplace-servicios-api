@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const provedoorSchema = z.object({
+export const proveedorSchema = z.object({
     usuario: z.string()
         .min(1, { message: 'El usuario es obligatorio' })
         .regex(/^[0-9a-fA-F]{24}$/, { message: 'El ID de usuario no tiene un formato valido' }),
