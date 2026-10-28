@@ -14,6 +14,7 @@ export const proveedorSchema = z.object({
         .optional(),
     fotosTrabajos: z.array(z.string())
         .optional(),
-    disponible: z.boolean()
+    disponible: z.boolean().optional()
         .default(true)
 })
+export const proveedorUpdateSchemaZod = proveedorSchema.partial();

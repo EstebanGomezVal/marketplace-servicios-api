@@ -35,4 +35,5 @@ export const usuarioSchemaZod = z.object({
         .optional(),
             rol: z.enum(['cliente', 'proveedor', 'admin']).optional()
 })
+export const usuarioUpdateSchemaZod = usuarioSchemaZod.partial();
 

@@ -8,6 +8,7 @@ import {
 } from '../controllers/suppliers.controller';
 import { validate } from '../middleware/data.middleware';
 import { objectIdSchema } from '../schemas/common.schema';
+import { proveedorSchema, proveedorUpdateSchemaZod } from '../schemas/Proveedor.schema';
 import { z } from 'zod';
 
 const router = Router();

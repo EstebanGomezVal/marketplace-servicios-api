@@ -2,6 +2,12 @@ import { Request, Response, NextFunction } from 'express';
 import Servicio from '../models/offering.model'; 
 import { httpStatus } from '../constants/httpsNumbers';
 
+const populateProveedor = {
+  path: 'proveedor',
+  select: 'descripcion experienciaAnios zonaCobertura disponible',
+  populate: { path: 'usuario', select: 'nombre apellido correo telefono' }
+};
+
 // GET /api/services
 export const obtenerServicios = async (
   req: Request,
@@ -29,7 +35,7 @@ export const obtenerServicioPorId = async (
     const { id } = req.params;
 
     const servicio = await Servicio.findOne({ _id: id, isDeleted: false })
-      .populate('proveedor', 'nombre email telefono');
+      .populate(populateProveedor);
 
     if (!servicio) {
       return res.status(httpStatus.NOT_FOUND).json({

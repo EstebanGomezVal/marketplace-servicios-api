@@ -10,8 +10,8 @@ export const obtenerBookings = async (
 ) => {
   try {
     const bookings = await Booking.find({ isDeleted: false })
-      .populate('usuario', 'nombre email')
-      .populate('servicio', 'titulo categoria precio tipoPrecio')
+      .populate('usuario', 'nombre apellido correo')
+      .populate('servicio', 'titulo precio categoria')
       .sort({ createdAt: -1 });
 
     res.status(httpStatus.SUCCESFUL).json(bookings);
