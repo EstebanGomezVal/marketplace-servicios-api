@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { CATEGORIAS_VALIDAS, TIPOS_PRECIO_VALIDOS } from '../models/Offering.model'
+import { CATEGORIAS_VALIDAS, TIPOS_PRECIO_VALIDOS } from '../models/offering.model'
 
 export const serviceSchemaZod = z.object({
     proveedor: z.string({ message: 'El proveedor es obligatorio' })

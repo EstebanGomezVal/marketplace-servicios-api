@@ -20,4 +20,5 @@ connect(uri).then(() => {
     });
 }).catch(e => {
     console.log('Error al conectarse en la base de datos:', e);
+    process.exit(1);
 });

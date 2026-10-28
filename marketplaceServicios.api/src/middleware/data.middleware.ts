@@ -11,7 +11,7 @@ export const validate = (source: 'body' | 'params' | 'query', schema: ZodType) =
                 field: issue.path.join('.'),
                 message: issue.message
             }));
-            res.status(httpStatus.NOT_FOUND).json({ error: { message: 'Datos invalidos', details } })
+            res.status(httpStatus.REQUEST_ERROR).json({ error: { message: 'Datos invalidos', details } })
             return;
         }
 

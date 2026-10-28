@@ -10,12 +10,12 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
     console.error(err)
 
     if (err.code === 11000) {
-        res.status(409).json({ error: { message: 'Registro duplicado' } })
+        res.status(httpStatus.CONFLICT).json({ error: { message: 'Registro duplicado' } })
         return;
     }
 
     if (err.name === 'CastError') {
-        res.status(httpStatus.NOT_FOUND).json({ error: { message: 'Id con formato invalido' } })
+        res.status(httpStatus.REQUEST_ERROR).json({ error: { message: 'Id con formato invalido' } })
         return;
     }
 
