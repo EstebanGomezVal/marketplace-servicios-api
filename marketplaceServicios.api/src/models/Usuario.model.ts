@@ -8,7 +8,8 @@ const usuarioSchema = new Schema({
     telefono: { type: String },
     ciudad: { type: String },
     fotoPerfil: { type: String },
-    rol: { type: String, enum: ['cliente', 'proveedor', 'admin'], default: 'cliente' }
+    rol: { type: String, enum: ['cliente', 'proveedor', 'admin'], default: 'cliente' },
+    isDeleted: { type: Boolean, default: false }
 }, {
     timestamps: true
 });
