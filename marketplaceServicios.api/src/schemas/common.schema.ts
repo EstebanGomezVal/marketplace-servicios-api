@@ -1,5 +1,5 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-export const idParamSchema = z.object({
-    id: z.string().regex(/^[0-9a-fA-F]{24}$/, { message: 'El id no tiene un formato valido' })
-});
+export const objectIdSchema = z
+  .string()
+  .regex(/^[0-9a-fA-F]{24}$/, "El ID no es un ObjectId válido");

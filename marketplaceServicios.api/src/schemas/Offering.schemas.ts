@@ -1,24 +1,31 @@
-import { z } from 'zod';
-import { CATEGORIAS_VALIDAS, TIPOS_PRECIO_VALIDOS } from '../models/offering.model'
+import { z } from "zod";
+import { objectIdSchema } from "./common.schema";
 
-export const serviceSchemaZod = z.object({
-    proveedor: z.string({ message: 'El proveedor es obligatorio' })
-        .min(1, { message: 'El proveedor no puede estar vacIo' })
-        .regex(/^[0-9a-fA-F]{24}$/, { message: 'El ID del proveedor no tiene un formato valido' }),
+export const CATEGORIAS_VALIDAS = [
+  "Plomería",
+  "Electricidad",
+  "Carpintería",
+  "Limpieza",
+  "Jardinería",
+  "Construcción",
+  "Tecnología",
+  "Otro",
+] as const;
 
-    titulo: z.string({ message: 'El titulo es obligatorio' })
-        .min(1, { message: 'El titulo no puede estar vacio' }),
+export const TIPOS_PRECIO_VALIDOS = ["fijo", "por hora", "cotización"] as const;
 
-    descripcion: z.string({ message: 'La descripcion es obligatoria' })
-        .min(1, { message: 'La descripcion no puede estar vacia' }),
+export const createOfferingSchema = z.object({
+  proveedor: objectIdSchema,
+  titulo: z.string().min(1, "El título es obligatorio"),
+  descripcion: z.string().min(1, "La descripción es obligatoria"),
+  categoria: z.enum(CATEGORIAS_VALIDAS, {
+    message: "Categoría no válida",
+  }),
+  precio: z.number().positive("El precio debe ser mayor a 0"),
+  tipoPrecio: z.enum(TIPOS_PRECIO_VALIDOS, {
+    message: "Tipo de precio no válido",
+  }),
+  activo: z.boolean().optional(),
+});
 
-    categoria: z.enum(CATEGORIAS_VALIDAS, {message: 'Categoria no valida' }),
-
-    precio: z.coerce.number({ message: 'El precio debe ser un numero valido' })
-        .min(0, { message: 'El precio no puede ser negativo' }),
-
-    tipoPrecio: z.enum(TIPOS_PRECIO_VALIDOS, { 
-        message: 'El tipo de precio debe ser fijo, por hora o cotizacion' }),
-
-    activo: z.boolean().default(true)
-})
+export const updateOfferingSchema = createOfferingSchema.partial();
