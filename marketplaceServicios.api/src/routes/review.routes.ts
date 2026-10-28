@@ -1,4 +1,11 @@
 import { Router } from 'express';
+import {
+  obtenerReviews,
+  obtenerReviewPorId,
+  crearReview,
+  actualizarReview,
+  eliminarReview,
+} from '../controllers/review.controller';
 import { validate } from '../middleware/data.middleware';
 import {
   createReviewSchema,
@@ -13,31 +20,31 @@ const idParamSchema = z.object({
   id: objectIdSchema,
 });
 
-router.get('/', (req, res) => res.status(501).json({ message: 'Pendiente' }));
+router.get('/', obtenerReviews);
 
 router.get(
   '/:id',
   validate('params', idParamSchema),
-  (req, res) => res.status(501).json({ message: 'Pendiente' })
+  obtenerReviewPorId
 );
 
 router.post(
   '/',
   validate('body', createReviewSchema),
-  (req, res) => res.status(501).json({ message: 'Pendiente' })
+  crearReview
 );
 
 router.put(
   '/:id',
   validate('params', idParamSchema),
   validate('body', updateReviewSchema),
-  (req, res) => res.status(501).json({ message: 'Pendiente' })
+  actualizarReview
 );
 
 router.delete(
   '/:id',
   validate('params', idParamSchema),
-  (req, res) => res.status(501).json({ message: 'Pendiente' })
+  eliminarReview
 );
 
 export default router;
