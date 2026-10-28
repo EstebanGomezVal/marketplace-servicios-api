@@ -19,7 +19,8 @@ const servicioSchema = new Schema({
     },
     precio: { type: Number, required: true },
     tipoPrecio: { type: String, enum: TIPOS_PRECIO_VALIDOS, required: true },
-    activo: { type: Boolean, default: true }
+    activo: { type: Boolean, default: true },
+    isDeleted: { type: Boolean, default: false }
 }, {
     timestamps: true
 });

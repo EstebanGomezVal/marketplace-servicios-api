@@ -33,7 +33,7 @@ export const usuarioSchemaZod = z.object({
             message: 'Debe ser una URL valida'
         })
         .optional(),
-    rol: z.enum(['admin', 'client', 'provider'], { message: 'El rol debe ser admin, client o provider' })
-        .default('client')
+        rol: { type: String, enum: ['cliente', 'proveedor', 'admin'], default: 'cliente' },
+        isDeleted: { type: Boolean, default: false }
 })
 
