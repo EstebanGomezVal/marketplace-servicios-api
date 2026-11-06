@@ -15,3 +15,7 @@ export const actualizarUsuario = async (req: Request, res: Response) => {
 export const eliminarUsuario = async (req: Request, res: Response) => {
     res.json({ message: 'Eliminar usuario' });
 };
+
+export const actualizarRolUsuario = async (req: Request, res: Response) => {
+    res.json({ message: 'Acualizar usuario' });
+};

@@ -5,6 +5,11 @@ import { connect } from 'mongoose';
 
 import app from './app';
 
+if (!process.env.JWT_SECRET) {
+    console.error('Error: La variable de entorno JWT_SECRET no está definida.');
+    process.exit(1);
+}
+
 const port = Number(process.env.PORT) || 3000;
 const uri = process.env.MONGODB_URI || '';
 

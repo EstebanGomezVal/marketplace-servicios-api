@@ -1,0 +1,44 @@
+<div>
+    <a href="/servicios">&larr; Volver al listado</a>
+
+    <div class="detail-box">
+        <span class="badge">{{servicio.categoria}}</span>
+        <h1>{{servicio.titulo}}</h1>
+        <div class="price-tag">${{servicio.precio}} ({{servicio.tipoPrecio}})</div>
+
+        <h3 style="margin-top: 1.5rem;">Descripción</h3>
+        <p style="margin-top: 0.5rem; color: #334155;">{{servicio.descripcion}}</p>
+
+        <section class="provider-section">
+            <h2>Información del Proveedor</h2>
+            
+            {{#if servicio.proveedor}}
+                <div style="margin-top: 1rem;">
+                    {{#if servicio.proveedor.usuario}}
+                        <p><strong>Nombre:</strong> {{servicio.proveedor.usuario.nombre}} {{servicio.proveedor.usuario.apellido}}</p>
+                        {{#if servicio.proveedor.usuario.telefono}}
+                            <p><strong>Teléfono:</strong> {{servicio.proveedor.usuario.telefono}}</p>
+                        {{/if}}
+                        {{#if servicio.proveedor.usuario.correo}}
+                            <p><strong>Correo:</strong> {{servicio.proveedor.usuario.correo}}</p>
+                        {{/if}}
+                    {{/if}}
+
+                    <p style="margin-top: 0.5rem;"><strong>Acerca del proveedor:</strong> {{servicio.proveedor.descripcion}}</p>
+                    <p><strong>Años de experiencia:</strong> {{servicio.proveedor.experienciaAnios}}</p>
+
+                    {{#if servicio.proveedor.zonaCobertura.length}}
+                        <p style="margin-top: 0.5rem;"><strong>Zonas de cobertura:</strong></p>
+                        <ul style="margin-left: 1.5rem; margin-top: 0.25rem;">
+                            {{#each servicio.proveedor.zonaCobertura}}
+                                <li>{{this}}</li>
+                            {{/each}}
+                        </ul>
+                    {{/if}}
+                </div>
+            {{else}}
+                <p style="color: var(--text-muted); margin-top: 0.5rem;">Información del proveedor no disponible.</p>
+            {{/if}}
+        </section>
+    </div>
+</div>
