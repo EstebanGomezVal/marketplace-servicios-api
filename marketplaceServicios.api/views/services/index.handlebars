@@ -4,14 +4,7 @@
     {{#if servicios.length}}
         <div class="card-grid">
             {{#each servicios}}
-                <div class="card">
-                    <div>
-                        <span class="badge">{{this.categoria}}</span>
-                        <h2>{{this.titulo}}</h2>
-                        <div class="price-tag">${{this.precio}} ({{this.tipoPrecio}})</div>
-                    </div>
-                    <a href="/servicios/{{this._id}}" class="btn">Ver detalle</a>
-                </div>
+                {{> service-card}}
             {{/each}}
         </div>
     {{else}}

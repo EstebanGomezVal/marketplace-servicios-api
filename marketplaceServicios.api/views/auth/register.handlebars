@@ -1,0 +1,54 @@
+<div class="form-box">
+    <h1>Crear cuenta</h1>
+
+    {{> flash}}
+
+    <form method="POST" action="/registro" novalidate>
+        <div class="field-row">
+            <div class="field">
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" name="nombre" value="{{values.nombre}}" autocomplete="given-name" required autofocus>
+                {{#if errors.nombre}}<p class="field-error">{{errors.nombre}}</p>{{/if}}
+            </div>
+            <div class="field">
+                <label for="apellido">Apellido</label>
+                <input type="text" id="apellido" name="apellido" value="{{values.apellido}}" autocomplete="family-name" required>
+                {{#if errors.apellido}}<p class="field-error">{{errors.apellido}}</p>{{/if}}
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="correo">Correo</label>
+            <input type="email" id="correo" name="correo" value="{{values.correo}}" autocomplete="email" required>
+            {{#if errors.correo}}<p class="field-error">{{errors.correo}}</p>{{/if}}
+        </div>
+
+        <div class="field">
+            <label for="password">Contraseña (mínimo 8 caracteres)</label>
+            <input type="password" id="password" name="password" autocomplete="new-password" minlength="8" required>
+            {{#if errors.password}}<p class="field-error">{{errors.password}}</p>{{/if}}
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label for="telefono">Teléfono (opcional)</label>
+                <input type="tel" id="telefono" name="telefono" value="{{values.telefono}}" inputmode="numeric" maxlength="10" placeholder="10 dígitos">
+                {{#if errors.telefono}}<p class="field-error">{{errors.telefono}}</p>{{/if}}
+            </div>
+            <div class="field">
+                <label for="ciudad">Ciudad (opcional)</label>
+                <input type="text" id="ciudad" name="ciudad" value="{{values.ciudad}}" autocomplete="address-level2">
+                {{#if errors.ciudad}}<p class="field-error">{{errors.ciudad}}</p>{{/if}}
+            </div>
+        </div>
+
+        <div class="field field-check">
+            <input type="checkbox" id="esProveedor" name="esProveedor" {{#if values.esProveedor}}checked{{/if}}>
+            <label for="esProveedor">Quiero ofrecer servicios (cuenta de proveedor)</label>
+        </div>
+
+        <button type="submit" class="btn">Crear cuenta</button>
+    </form>
+
+    <p class="form-footer">¿Ya tienes cuenta? <a href="/login">Inicia sesión</a></p>
+</div>

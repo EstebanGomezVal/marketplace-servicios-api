@@ -13,6 +13,7 @@ const usuarioSchema = new Schema({
     },
     googleId: { type: String, unique: true, sparse: true },
     isDeleted: { type: Boolean, default: false },
+    emailVerified: { type: Boolean, default: false },
     telefono: { type: String },
     ciudad: { type: String },
     fotoPerfil: { type: String },

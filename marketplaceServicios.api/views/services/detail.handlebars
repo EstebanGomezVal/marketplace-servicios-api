@@ -9,6 +9,55 @@
         <h3 style="margin-top: 1.5rem;">Descripción</h3>
         <p style="margin-top: 0.5rem; color: #334155;">{{servicio.descripcion}}</p>
 
+        <section class="provider-section" id="solicitar">
+            {{#if isOwner}}
+                <span class="badge badge-owner">Es tu servicio</span>
+                <p style="color: var(--text-muted);">Las solicitudes de este servicio aparecen en <a href="/mis-solicitudes">Solicitudes recibidas</a>.</p>
+            {{else if puedeSolicitar}}
+                <h2>Solicitar servicio</h2>
+                {{> flash}}
+                <form method="POST" action="/servicios/{{servicio._id}}/solicitar" class="request-form" novalidate>
+                    <div class="field">
+                        <label for="descripcion">¿Qué necesitas? (opcional)</label>
+                        <textarea id="descripcion" name="descripcion" rows="3">{{values.descripcion}}</textarea>
+                        {{#if errors.descripcion}}<p class="field-error">{{errors.descripcion}}</p>{{/if}}
+                    </div>
+                    <div class="field-row">
+                        <div class="field">
+                            <label for="direccion">Dirección (opcional)</label>
+                            <input type="text" id="direccion" name="direccion" value="{{values.direccion}}" autocomplete="street-address">
+                            {{#if errors.direccion}}<p class="field-error">{{errors.direccion}}</p>{{/if}}
+                        </div>
+                        <div class="field">
+                            <label for="fechaProgramada">Fecha deseada (opcional)</label>
+                            <input type="datetime-local" id="fechaProgramada" name="fechaProgramada" value="{{values.fechaProgramada}}">
+                            {{#if errors.fechaProgramada}}<p class="field-error">{{errors.fechaProgramada}}</p>{{/if}}
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">Solicitar servicio</button>
+                </form>
+            {{else if necesitaVerificar}}
+                <h2>Solicitar servicio</h2>
+                {{> flash}}
+                <div class="alert alert-info" role="status">
+                    Para solicitar servicios primero verifica tu correo. Revisa tu bandeja o
+                    <form method="POST" action="/reenviar-verificacion" class="inline-form">
+                        <input type="hidden" name="next" value="/servicios/{{servicio._id}}">
+                        <button type="submit" class="link-button" style="text-decoration: underline; color: inherit; font-weight: 600;">reenvía el correo</button>
+                    </form>.
+                </div>
+            {{else if currentUser}}
+                {{> flash}}
+                {{#if esOtroProveedor}}
+                    <p style="color: var(--text-muted);">Las cuentas de proveedor no pueden solicitar servicios.</p>
+                {{else}}
+                    {{#unless disponible}}<p style="color: var(--text-muted);">Este servicio no está disponible por ahora.</p>{{/unless}}
+                {{/if}}
+            {{else}}
+                <a href="/login?next=/servicios/{{servicio._id}}" class="btn">Inicia sesión para solicitar</a>
+            {{/if}}
+        </section>
+
         <section class="provider-section">
             <h2>Información del Proveedor</h2>
             

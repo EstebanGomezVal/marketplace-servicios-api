@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marketplace de Servicios</title>
+    <title>{{#if title}}{{title}} · {{/if}}Marketplace de Servicios</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -132,16 +132,184 @@
             padding: 3rem 1rem;
             color: var(--text-muted);
         }
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        nav a { margin-left: 0; }
+
+        .nav-user {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .inline-form { display: inline; }
+
+        .link-button {
+            background: none;
+            border: none;
+            padding: 0;
+            font: inherit;
+            font-weight: 500;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .link-button:hover { color: var(--primary); }
+
+        button.btn { border: none; cursor: pointer; font-family: inherit; }
+
+        .form-box {
+            max-width: 440px;
+            margin: 2rem auto;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 2rem;
+        }
+
+        .form-box h1 { margin-bottom: 1.25rem; font-size: 1.5rem; }
+
+        .field { margin-bottom: 1rem; }
+
+        .field label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .field input[type="text"],
+        .field input[type="email"],
+        .field input[type="password"],
+        .field input[type="tel"] {
+            width: 100%;
+            padding: 0.55rem 0.7rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font: inherit;
+        }
+
+        .field input:focus { outline: 2px solid var(--primary); outline-offset: -1px; }
+
+        .field-row { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .field-row .field { flex: 1 1 160px; }
+
+        .field-check { display: flex; gap: 0.5rem; align-items: flex-start; font-size: 0.9rem; }
+        .field-check label { font-weight: 500; display: inline; }
+
+        .field-error { color: #b91c1c; font-size: 0.8rem; margin-top: 0.25rem; }
+
+        .alert {
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .alert-error { background: #fee2e2; color: #991b1b; }
+        .alert-success { background: #dcfce7; color: #166534; }
+        .alert-info { background: #dbeafe; color: #1e40af; }
+
+        .verify-banner {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 1rem;
+            justify-content: center;
+            align-items: center;
+            background: #fef3c7;
+            color: #92400e;
+            padding: 0.6rem 1rem;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .verify-banner-btn { color: #92400e; text-decoration: underline; font-weight: 600; }
+
+        .form-box .btn { width: 100%; padding: 0.65rem; font-size: 1rem; }
+
+        .field textarea {
+            width: 100%;
+            padding: 0.55rem 0.7rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font: inherit;
+            resize: vertical;
+        }
+
+        .field input[type="datetime-local"] {
+            width: 100%;
+            padding: 0.5rem 0.7rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font: inherit;
+        }
+
+        .request-form { margin-top: 1rem; max-width: 640px; }
+
+        .badge-owner { background: #dcfce7; color: #166534; }
+
+        .muted { color: var(--text-muted); font-size: 0.85rem; }
+
+        .table-wrap { overflow-x: auto; margin-top: 1.5rem; }
+
+        .bookings-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .bookings-table th,
+        .bookings-table td {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+
+        .bookings-table th { font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); }
+        .bookings-table a { color: var(--primary); font-weight: 600; text-decoration: none; }
+
+        .estado {
+            display: inline-block;
+            padding: 0.15rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .estado-pendiente { background: #fef3c7; color: #92400e; }
+        .estado-aceptada { background: #dbeafe; color: #1e40af; }
+        .estado-completada { background: #dcfce7; color: #166534; }
+        .estado-rechazada { background: #fee2e2; color: #991b1b; }
+        .estado-cancelada { background: #f1f5f9; color: #475569; }
+
+        .btn-google {
+            display: block;
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-google:hover { background: var(--bg); }
+
+        .form-footer { margin-top: 1rem; text-align: center; font-size: 0.9rem; color: var(--text-muted); }
+        .form-footer a { color: var(--primary); }
     </style>
 </head>
 <body>
     <header>
         <a href="/" class="brand">Marketplace Servicios</a>
-        <nav>
-            <a href="/">Inicio</a>
-            <a href="/servicios">Servicios</a>
-        </nav>
+        {{> nav}}
     </header>
+
+    {{> verify-banner}}
 
     <main>
         {{{body}}}

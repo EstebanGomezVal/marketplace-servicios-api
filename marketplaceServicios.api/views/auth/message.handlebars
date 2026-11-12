@@ -1,0 +1,7 @@
+<div class="form-box">
+    <h1>{{title}}</h1>
+    <div class="alert alert-{{#if (eq tipo "info")}}info{{else}}{{tipo}}{{/if}}" role="status">{{mensaje}}</div>
+    {{#if accion}}
+        <a href="{{accion.href}}" class="btn">{{accion.texto}}</a>
+    {{/if}}
+</div>
