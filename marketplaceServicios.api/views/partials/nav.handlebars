@@ -1,0 +1,13 @@
+<nav>
+    <a href="/servicios">Servicios</a>
+    {{#if currentUser}}
+        <a href="/mis-solicitudes">{{#if (eq currentUser.rol "proveedor")}}Solicitudes recibidas{{else}}Mis solicitudes{{/if}}</a>
+        <span class="nav-user">Hola, {{currentUser.nombre}}{{#if (eq currentUser.rol "proveedor")}} (proveedor){{/if}}{{#if (eq currentUser.rol "admin")}} (admin){{/if}}</span>
+        <form method="POST" action="/logout" class="inline-form">
+            <button type="submit" class="link-button">Cerrar sesión</button>
+        </form>
+    {{else}}
+        <a href="/login">Iniciar sesión</a>
+        <a href="/registro" class="btn">Registrarse</a>
+    {{/if}}
+</nav>

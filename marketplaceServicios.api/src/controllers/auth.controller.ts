@@ -1,83 +1,79 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
+import usuarioModel from '../models/Usuario.model';
+import {
+  register,
+  login as loginService,
+  signToken,
+  INVALID_CREDENTIALS_ERROR
+} from '../services/auth.service';
 import { httpStatus } from '../constants/httpsNumbers';
-import { register, login as loginService, signToken, INVALID_CREDENTIALS_ERROR } from '../services/auth.service';
-import Usuario from '../models/Usuario.model';
 
-export const registrar = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const usuarioCreado = await register(req.body);
-        res.status(httpStatus.OBJECT_CREATED).json(usuarioCreado);
-    } catch (error) {
-        next(error);
+export const registrar = async (req: Request, res: Response) => {
+  try {
+    const usuario = await register(req.body);
+    const token = signToken(usuario);
+
+    res.status(httpStatus.OBJECT_CREATED).json({
+      usuario, // toJSON del modelo ya quita password
+      token
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Error al registrar';
+    // correo duplicado u otros
+    if (message.includes('duplicate') || message.includes('E11000')) {
+      res.status(httpStatus.CONFLICT).json({
+        error: { message: 'El correo ya está registrado' }
+      });
+      return;
     }
+    res.status(httpStatus.REQUEST_ERROR).json({ error: { message } });
+  }
 };
 
-export const login = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const usuario = await loginService(req.body);
-        const token = signToken(usuario);
+export const login = async (req: Request, res: Response) => {
+  try {
+    const usuario = await loginService(req.body);
+    const token = signToken(usuario);
 
-        res.cookie('token', token, {
-            httpOnly: true,
-            sameSite: 'lax',
-            secure: process.env.NODE_ENV === 'production'
-        });
-
-        res.status(httpStatus.SUCCESFUL).json({
-            token,
-            usuario
-        });
-    } catch (error) {
-        if (error instanceof Error && error.message === INVALID_CREDENTIALS_ERROR) {
-            res.status(httpStatus.UNAUTHORIZED).json({
-                error: {
-                    message: INVALID_CREDENTIALS_ERROR
-                }
-            });
-            return;
-        }
-        next(error);
-    }
-};
-
-export const logout = async (_req: Request, res: Response) => {
-    res.clearCookie('token', {
-        httpOnly: true,
-        sameSite: 'lax',
-        secure: process.env.NODE_ENV === 'production'
+    // Opcional: cookie
+    res.cookie?.('token', token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 1000 // 1h
     });
 
     res.status(httpStatus.SUCCESFUL).json({
-        message: 'Sesión cerrada correctamente'
+      usuario, // sin password
+      token
     });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Error al iniciar sesión';
+    if (message === INVALID_CREDENTIALS_ERROR) {
+      res.status(httpStatus.UNAUTHORIZED).json({ error: { message } });
+      return;
+    }
+    res.status(httpStatus.SERVER_ERROR).json({ error: { message: 'Error interno' } });
+  }
 };
 
-export const getMe = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        if (!req.user) {
-            res.status(httpStatus.UNAUTHORIZED).json({
-                error: {
-                    message: 'No autenticado'
-                }
-            });
-            return;
-        }
+export const logout = (_req: Request, res: Response) => {
+  res.clearCookie?.('token');
+  res.status(httpStatus.SUCCESFUL).json({ message: 'Sesión cerrada' });
+};
 
-        const usuario = await Usuario.findOne({ _id: req.user.id, isDeleted: { $ne: true } }).select('-password');
+export const getMe = async (req: Request, res: Response) => {
+  try {
+    const usuario = await usuarioModel.findById(req.user!.id);
 
-        if (!usuario) {
-            res.status(httpStatus.NOT_FOUND).json({
-                error: {
-                    message: 'Usuario no encontrado'
-                }
-            });
-            return;
-        }
-
-        res.status(httpStatus.SUCCESFUL).json({
-            data: usuario
-        });
-    } catch (error) {
-        next(error);
+    if (!usuario || usuario.isDeleted) {
+      res.status(httpStatus.UNAUTHORIZED).json({
+        error: { message: 'Usuario no encontrado o eliminado' }
+      });
+      return;
     }
+
+    res.status(httpStatus.SUCCESFUL).json(usuario);
+  } catch {
+    res.status(httpStatus.SERVER_ERROR).json({ error: { message: 'Error interno' } });
+  }
 };

@@ -6,7 +6,8 @@ const proveedorSchema = new Schema({
     experienciaAnios: { type: Number, required: true, min: 0 },
     zonaCobertura: [{ type: String }],
     fotosTrabajos: [{ type: String }],
-    disponible: { type: Boolean, default: true }
+    disponible: { type: Boolean, default: true },
+    isDeleted: { type: Boolean, default: false }
 }, {
     timestamps: true
 });

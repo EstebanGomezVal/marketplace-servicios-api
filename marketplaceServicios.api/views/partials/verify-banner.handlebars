@@ -1,0 +1,11 @@
+{{#if currentUser}}
+    {{#unless currentUser.emailVerified}}
+        <div class="verify-banner" role="status">
+            <span>Verifica tu correo para solicitar servicios y dejar reseñas. Te enviamos un enlace al registrarte.</span>
+            <form method="POST" action="/reenviar-verificacion" class="inline-form">
+                <input type="hidden" name="next" value="{{currentPath}}">
+                <button type="submit" class="link-button verify-banner-btn">Reenviar correo</button>
+            </form>
+        </div>
+    {{/unless}}
+{{/if}}

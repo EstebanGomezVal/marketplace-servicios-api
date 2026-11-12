@@ -1,79 +1,98 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import Usuario from '../models/Usuario.model';
+import usuarioModel from '../models/Usuario.model';
 import { httpStatus } from '../constants/httpsNumbers';
 
-export interface AuthenticatedRequest extends Request {
-  user?: {
-    id: string;
-    rol: 'cliente' | 'proveedor' | 'admin';
-  };
+type Rol = 'cliente' | 'proveedor' | 'admin';
+
+interface JwtPayload {
+  id?: string;
+  sub?: string;
+  rol?: string;
 }
 
-/**
- * Middleware de Autenticación
- */
-export const authentication = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const authHeader = req.headers.authorization;
-    let token: string | undefined;
+const getToken = (req: Request): string | null => {
+  const authHeader = req.headers.authorization;
+  if (authHeader?.startsWith('Bearer ')) {
+    return authHeader.slice(7).trim();
+  }
+  const cookieToken = (req as Request & { cookies?: { token?: string } }).cookies?.token;
+  if (cookieToken) return cookieToken;
+  return null;
+};
 
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      token = authHeader.split(' ')[1];
-    } else if (req.cookies && req.cookies.token) {
-      token = req.cookies.token;
-    }
+// requireAuth / authentication
+export const requireAuth = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = getToken(req);
 
     if (!token) {
-      res.status(httpStatus.UNAUTHORIZED).json({ error: { message: 'No autorizado. Token no proporcionado' } });
+      res.status(httpStatus.UNAUTHORIZED).json({
+        error: { message: 'Token no proporcionado' }
+      });
       return;
     }
 
     const secret = process.env.JWT_SECRET || 'secreto_temporal';
-    const decoded = jwt.verify(token, secret) as any;
+    let payload: JwtPayload;
 
-    const usuario = await Usuario.findOne({ 
-      _id: decoded.id || decoded.sub, 
-      isDeleted: { $ne: true } 
-    }).lean();
-
-    if (!usuario) {
-      res.status(httpStatus.UNAUTHORIZED).json({ error: { message: 'No autorizado. El usuario ya no existe' } });
+    try {
+      payload = jwt.verify(token, secret) as JwtPayload;
+    } catch {
+      res.status(httpStatus.UNAUTHORIZED).json({
+        error: { message: 'Token inválido o expirado' }
+      });
       return;
     }
 
-    // Guardamos id en string y el rol directo de la BD
+    const userId = payload.id ?? payload.sub;
+    if (!userId) {
+      res.status(httpStatus.UNAUTHORIZED).json({
+        error: { message: 'Token inválido' }
+      });
+      return;
+    }
+
+    const usuario = await usuarioModel.findById(userId).select('_id rol isDeleted');
+
+    if (!usuario || usuario.isDeleted) {
+      res.status(httpStatus.UNAUTHORIZED).json({
+        error: { message: 'Usuario no encontrado o eliminado' }
+      });
+      return;
+    }
+
     req.user = {
-      id: usuario._id.toString(),
-      rol: usuario.rol as 'cliente' | 'proveedor' | 'admin'
+      id: String(usuario._id),
+      rol: usuario.rol as Rol
     };
 
     next();
-  } catch (error) {
-    res.status(httpStatus.UNAUTHORIZED).json({ error: { message: 'Token inválido o expirado' } });
-    return;
+  } catch {
+    res.status(httpStatus.UNAUTHORIZED).json({
+      error: { message: 'Error de autenticación' }
+    });
   }
 };
 
-/**
- * Middleware de Autorización por Rol
- */
-export const allowRole = (...allowedRoles: string[]) => {
-  return (req: Request, res: Response, next: NextFunction): void => {
+// Alias para las rutas que ya importan authentication
+export const authentication = requireAuth;
+
+// 403 si req.user.rol no está en la lista
+// Nunca responde y llama a next() a la vez
+export const allowRoles = (...roles: Rol[]) => {
+  return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {
-      res.status(httpStatus.UNAUTHORIZED).json({ error: { message: 'No autorizado. Inicie sesión primero' } });
+      res.status(httpStatus.UNAUTHORIZED).json({
+        error: { message: 'No autenticado' }
+      });
       return;
     }
 
-    const userRole = req.user.rol;
-    const normalizedAllowed = allowedRoles.map(r => (r === 'admins' ? 'admin' : r));
-
-    if (!normalizedAllowed.includes(userRole)) {
-      res.status(httpStatus.FORBIDDEN).json({ error: { message: 'Acceso prohibido. Permisos insuficientes' } });
+    if (!roles.includes(req.user.rol)) {
+      res.status(httpStatus.FORBIDDEN).json({
+        error: { message: 'No tienes permiso para realizar esta acción' }
+      });
       return;
     }
 
@@ -81,5 +100,11 @@ export const allowRole = (...allowedRoles: string[]) => {
   };
 };
 
-export const requireAuth = authentication;
-export const allowRoles = allowRole;
+/** Alias compatible con rutas actuales (acepta varios roles) */
+export const allowRole = (...roles: string[]) => {
+  const normalized = roles
+    .map((r) => (r === 'admins' ? 'admin' : r))
+    .filter((r): r is Rol => ['cliente', 'proveedor', 'admin'].includes(r));
+
+  return allowRoles(...normalized);
+};

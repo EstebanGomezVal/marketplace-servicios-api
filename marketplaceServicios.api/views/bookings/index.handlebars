@@ -1,0 +1,52 @@
+<div>
+    <h1>{{titulo}}</h1>
+
+    <div style="margin-top: 1rem;">{{> flash}}</div>
+
+    {{#if bookings.length}}
+        <div class="table-wrap">
+            <table class="bookings-table">
+                <thead>
+                    <tr>
+                        <th>Servicio</th>
+                        {{#if mostrarCliente}}<th>Cliente</th>{{/if}}
+                        <th>Estado</th>
+                        <th>Fecha deseada</th>
+                        <th>Dirección</th>
+                        <th>Solicitada</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each bookings}}
+                        <tr>
+                            <td>
+                                {{#if servicio}}
+                                    <a href="/servicios/{{servicio._id}}">{{servicio.titulo}}</a>
+                                    <div class="muted">${{servicio.precio}} · {{servicio.categoria}}</div>
+                                {{else}}
+                                    <span class="muted">Servicio eliminado</span>
+                                {{/if}}
+                                {{#if descripcion}}<div class="muted">“{{descripcion}}”</div>{{/if}}
+                            </td>
+                            {{#if ../mostrarCliente}}
+                                <td>
+                                    {{usuario.nombre}} {{usuario.apellido}}
+                                    <div class="muted">{{usuario.correo}}</div>
+                                </td>
+                            {{/if}}
+                            <td><span class="estado estado-{{estado}}">{{estado}}</span></td>
+                            <td>{{#if fechaProgramada}}{{fecha fechaProgramada}}{{else}}<span class="muted">—</span>{{/if}}</td>
+                            <td>{{#if direccion}}{{direccion}}{{else}}<span class="muted">—</span>{{/if}}</td>
+                            <td class="muted">{{fecha createdAt}}</td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    {{else}}
+        <div class="empty-state">
+            <p>{{vacio}}</p>
+            <a href="/servicios" class="btn" style="margin-top: 1rem;">Explorar servicios</a>
+        </div>
+    {{/if}}
+</div>
